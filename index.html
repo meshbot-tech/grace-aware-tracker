@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spiritual Alignment - Daily Growth Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            /* Professional Brand Colors */
+            --primary: #2C5F4F;
+            --primary-light: #4A8371;
+            --primary-dark: #1A3D2F;
+            --secondary: #D4A574;
+            --secondary-light: #E6C499;
+            --accent: #8B6F47;
+            --background: #F8F6F3;
+            --surface: #FFFFFF;
+            --text-primary: #2D2D2D;
+            --text-secondary: #5F5F5F;
+            --text-muted: #8E8E8E;
+            --border: rgba(44, 95, 79, 0.1);
+            --success: #4A8371;
+            --warning: #D4A574;
+            --tender: #B89968;
+            --shadow: rgba(44, 95, 79, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Heartbeat Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .heart-loader {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            animation: heartbeat 1.2s ease-in-out infinite;
+        }
+
+        .heart-loader::before,
+        .heart-loader::after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            width: 40px;
+            height: 64px;
+            background: var(--secondary);
+            border-radius: 40px 40px 0 0;
+        }
+
+        .heart-loader::before {
+            left: 20px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart-loader::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.15); }
+        }
+
+        .loader-text {
+            color: var(--surface);
+            margin-top: 40px;
+            font-size: 1.2rem;
+            font-family: 'Crimson Pro', serif;
+            font-weight: 300;
+        }
+
+        .loader-counter {
+            color: var(--secondary);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Auth Screen */
+        .auth-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            transition: opacity 0.5s ease;
+        }
+
+        .auth-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .auth-card {
+            background: var(--surface);
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .auth-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .google-btn {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .google-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        /* App Layout */
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .app.visible {
+            opacity: 1;
+        }
+
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .app-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+
+        .user-profile:hover {
+            background: var(--background);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .user-email {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 2rem;
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            padding: 0.7rem 1.25rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background: var(--background);
+            color: var(--primary);
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Progress Stats Bar */
+        .stats-bar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1.5rem 2rem;
+            color: white;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .stat-detail {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
+
+        .progress-bar-container {
+            margin-top: 0.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--secondary);
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .view-content {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Verse of the Day */
+        .verse-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verse-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 120px;
+            opacity: 0.1;
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .verse-text {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            font-style: italic;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .verse-reference {
+            font-size: 0.95rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .verse-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .verse-input {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .verse-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .verse-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .share-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .share-btn:hover {
+            background: #20BA5A;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .view-toggle-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .view-toggle-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .view-toggle-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Calendar View Enhanced */
+        .calendar-view {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .calendar-month {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.75rem;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            padding: 0.5rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+            background: var(--background);
+        }
+
+        .calendar-day:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .calendar-day.has-entry {
+            background: var(--surface);
+            border: 2px solid var(--border);
+        }
+
+        .day-number {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .day-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 4px;
+        }
+
+        /* Board View (Kanban) */
+        .board-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .board-column {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .board-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .board-count {
+            background: var(--background);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .board-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .board-card {
+            background: var(--background);
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .board-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .board-card-date {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .board-card-preview {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Table View */
+        .table-view {
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--background);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: var(--background);
+        }
+
+        .state-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .state-aligned {
+            background: rgba(74, 131, 113, 0.15);
+            color: var(--success);
+        }
+
+        .state-growing {
+            background: rgba(212, 165, 116, 0.15);
+            color: var(--warning);
+        }
+
+        .state-tender {
+            background: rgba(184, 153, 104, 0.15);
+            color: var(--tender);
+        }
+
+        /* Entry Form */
+        .entry-form {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .helper-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+
+        .multi-select, .single-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .multi-select button, .single-select button {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .multi-select button:hover, .single-select button:hover {
+            border-color: var(--primary);
+            background: var(--background);
+        }
+
+        .multi-select button.selected, .single-select button.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            transition: all 0.2s ease;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+
+        textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .save-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .save-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .nav {
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr 1fr;
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .verse-card {
+                padding: 1.5rem;
+            }
+
+            .verse-text {
+                font-size: 1.1rem;
+            }
+
+            .board-view {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-grid {
+                gap: 0.5rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-title {
+                font-size: 1rem;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .view-toggle {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="heart-loader"></div>
+        <div class="loader-text">Loading your journey...</div>
+        <div class="loader-counter" id="loader-counter">0%</div>
+    </div>
+
+    <!-- Auth Screen -->
+    <div class="auth-screen" id="auth-screen">
+        <div class="auth-card">
+            <div class="auth-logo">✝</div>
+            <h1 class="auth-title">Spiritual Alignment</h1>
+            <p class="auth-subtitle">Track your daily growth with grace and awareness</p>
+            <div id="googleSignInButton"></div>
+            <p style="color: var(--text-muted); margin-top: 1.5rem; font-size: 0.85rem;">
+                Sign in to save your progress and access from any device
+            </p>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app" id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">✝</div>
+                <h1 class="app-title">Spiritual Alignment</h1>
+            </div>
+            <div class="user-profile" id="user-profile">
+                <div class="user-avatar" id="user-avatar"></div>
+                <div class="user-info">
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Stats -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-label">Current Streak</div>
+                <div class="stat-value" id="stat-streak">0</div>
+                <div class="stat-detail">days</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Alignment Score</div>
+                <div class="stat-value" id="stat-alignment">0%</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progress-alignment" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Total Entries</div>
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-detail">tracked</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">This Month</div>
+                <div class="stat-value" id="stat-month">0</div>
+                <div class="stat-detail">entries</div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-btn active" data-view="daily">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                <span>Daily Entry</span>
+            </button>
+            <button class="nav-btn" data-view="history">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                <span>History</span>
+            </button>
+            <button class="nav-btn" data-view="weekly">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span>Weekly</span>
+            </button>
+        </nav>
+
+        <div class="container">
+            <!-- Daily View -->
+            <div id="daily-view" class="view-content">
+                <!-- Verse of the Day -->
+                <div class="verse-card">
+                    <div class="verse-text" id="verse-text">
+                        For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope.
+                    </div>
+                    <div class="verse-reference" id="verse-reference">Jeremiah 29:11</div>
+                    <div class="verse-actions">
+                        <input type="text" class="verse-input" id="custom-verse" placeholder="Enter your own verse for today...">
+                        <button class="share-btn" id="share-verse">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            Share on WhatsApp
+                        </button>
+                    </div>
+                </div>
+
+                <div class="entry-form">
+                    <div class="form-section">
+                        <label>Heart (Motives)</label>
+                        <div class="multi-select" id="heart-select"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <label>Response (Reactions)</label>
+                        <div class="multi-select" id="response-select"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <label>Obedience</label>
+                        <div class="single-select" id="obedience-select"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <label>Love Expression</label>
+                        <div class="single-select" id="love-select"></div>
+                    </div>
+
+                    <div class="form-section">
+                        <label>Key Moment of the Day</label>
+                        <p class="helper-text">What moment revealed your heart the most?</p>
+                        <textarea id="key-moment" placeholder="Write honestly..." rows="4"></textarea>
+                    </div>
+
+                    <div class="form-section">
+                        <label>Prayer / Surrender</label>
+                        <p class="helper-text">A short, honest prayer</p>
+                        <textarea id="prayer" placeholder="Lord..." rows="3"></textarea>
+                    </div>
+
+                    <button class="save-btn" id="save-entry">Save Entry</button>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="history-view" class="view-content hidden">
+                <div class="view-toggle">
+                    <button class="view-toggle-btn active" data-history-view="calendar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Calendar View
+                    </button>
+                    <button class="view-toggle-btn" data-history-view="board">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        Board View
+                    </button>
+                    <button class="view-toggle-btn" data-history-view="table">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                        Table View
+                    </button>
+                </div>
+
+                <!-- Calendar View -->
+                <div id="calendar-view-container" class="calendar-view">
+                    <div class="calendar-header">
+                        <div class="calendar-month" id="calendar-month">March 2026</div>
+                    </div>
+                    <div class="calendar-grid" id="calendar-full-grid"></div>
+                </div>
+
+                <!-- Board View -->
+                <div id="board-view-container" class="board-view hidden">
+                    <div class="board-column">
+                        <div class="board-header">
+                            <div class="board-title" style="color: var(--success)">Aligned</div>
+                            <div class="board-count" id="aligned-count">0</div>
+                        </div>
+                        <div class="board-cards" id="aligned-cards"></div>
+                    </div>
+                    <div class="board-column">
+                        <div class="board-header">
+                            <div class="board-title" style="color: var(--warning)">Growing</div>
+                            <div class="board-count" id="growing-count">0</div>
+                        </div>
+                        <div class="board-cards" id="growing-cards"></div>
+                    </div>
+                    <div class="board-column">
+                        <div class="board-header">
+                            <div class="board-title" style="color: var(--tender)">Tender</div>
+                            <div class="board-count" id="tender-count">0</div>
+                        </div>
+                        <div class="board-cards" id="tender-cards"></div>
+                    </div>
+                </div>
+
+                <!-- Table View -->
+                <div id="table-view-container" class="table-view hidden">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>State</th>
+                                    <th>Score</th>
+                                    <th>Heart</th>
+                                    <th>Response</th>
+                                    <th>Obedience</th>
+                                    <th>Love</th>
+                                    <th>Key Moment</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly View -->
+            <div id="weekly-view" class="view-content hidden">
+                <div class="entry-form">
+                    <div class="form-section">
+                        <label>Week of</label>
+                        <input type="date" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 10px; font-size: 0.95rem;" id="weekly-date">
+                    </div>
+
+                    <div class="form-section">
+                        <label>Patterns Noticed</label>
+                        <textarea id="patterns" placeholder="What keeps repeating?" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-section">
+                        <label>Area of Growth</label>
+                        <textarea id="growth" placeholder="Where am I growing?" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-section">
+                        <label>Area of Struggle</label>
+                        <textarea id="struggle" placeholder="Where am I resisting?" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-section">
+                        <label>What God is Emphasizing</label>
+                        <textarea id="emphasis" placeholder="What is He highlighting?" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-section">
+                        <label>Prayer Focus</label>
+                        <textarea id="weekly-prayer" placeholder="Prayer for the week ahead..." rows="3"></textarea>
+                    </div>
+
+                    <button class="save-btn" id="save-reflection">Save Reflection</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Replace with your Google Client ID from Google Cloud Console
+        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com';
+
+        // State
+        const state = {
+            user: null,
+            currentView: 'daily',
+            historyView: 'calendar',
+            selectedDate: new Date().toISOString().split('T')[0],
+            entries: [],
+            weeklyReflections: [],
+            currentEntry: {
+                date: new Date().toISOString().split('T')[0],
+                heart: [],
+                response: [],
+                obedience: '',
+                loveExpression: '',
+                keyMoment: '',
+                prayer: '',
+                userName: '',
+                userEmail: ''
+            },
+            customVerse: ''
+        };
+
+        const options = {
+            heart: ['Pure', 'Seeking validation', 'Pride', 'Fear', 'Self-conscious'],
+            response: ['Patient', 'Defensive', 'Irritated', 'Calm', 'Bitter', 'Teachable'],
+            obedience: ['Prompt', 'Delayed', 'Ignored', 'Sensitive'],
+            love: ['Genuine', 'Partial', 'Struggled', 'Self-centered']
+        };
+
+        // Preloader with heartbeat counter
+        function showPreloader() {
+            const preloader = document.getElementById('preloader');
+            const counter = document.getElementById('loader-counter');
+            let progress = 0;
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                
+                counter.textContent = Math.floor(progress) + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        preloader.classList.add('hidden');
+                    }, 300);
+                }
+            }, 120); // Heartbeat rate
+        }
+
+        // Google Sign-In
+        function handleCredentialResponse(response) {
+            const responsePayload = parseJwt(response.credential);
+            
+            state.user = {
+                id: responsePayload.sub,
+                name: responsePayload.name,
+                email: responsePayload.email,
+                picture: responsePayload.picture
+            };
+
+            // Auto-fill user details in entries
+            state.currentEntry.userName = state.user.name;
+            state.currentEntry.userEmail = state.user.email;
+
+            // Update UI
+            document.getElementById('user-name').textContent = state.user.name;
+            document.getElementById('user-email').textContent = state.user.email;
+            
+            const avatar = document.getElementById('user-avatar');
+            if (state.user.picture) {
+                avatar.innerHTML = `<img src="${state.user.picture}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            } else {
+                avatar.textContent = state.user.name.charAt(0).toUpperCase();
+            }
+
+            // Save to localStorage
+            localStorage.setItem('spiritualUser', JSON.stringify(state.user));
+            
+            // Hide auth screen
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app').classList.add('visible');
+            
+            // Load user data
+            loadUserData();
+        }
+
+        function parseJwt(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => 
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            ).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        // Initialize Google Sign-In
+        function initGoogleSignIn() {
+            if (typeof google !== 'undefined') {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleCredentialResponse
+                });
+
+                google.accounts.id.renderButton(
+                    document.getElementById('googleSignInButton'),
+                    { 
+                        theme: 'outline', 
+                        size: 'large',
+                        text: 'signin_with',
+                        width: 280
+                    }
+                );
+            }
+        }
+
+        // Load and save data
+        function loadUserData() {
+            const saved = localStorage.getItem(`spiritual_${state.user.id}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                state.entries = data.entries || [];
+                state.weeklyReflections = data.reflections || [];
+                state.customVerse = data.customVerse || '';
+            }
+            updateStats();
+            loadEntryForDate(state.selectedDate);
+        }
+
+        function saveUserData() {
+            if (state.user) {
+                localStorage.setItem(`spiritual_${state.user.id}`, JSON.stringify({
+                    entries: state.entries,
+                    reflections: state.weeklyReflections,
+                    customVerse: state.customVerse
+                }));
+            }
+        }
+
+        // Calculations
+        function calculateAlignment(entry) {
+            let score = 0;
+            if (entry.obedience === 'Prompt') score += 2;
+            if (entry.obedience === 'Sensitive') score += 2;
+            if (entry.loveExpression === 'Genuine') score += 2;
+            if (entry.response.includes('Patient')) score += 1;
+            if (entry.response.includes('Calm')) score += 1;
+            if (entry.response.includes('Teachable')) score += 1;
+            if (entry.heart.includes('Pure')) score += 1;
+            return score;
+        }
+
+        function getAlignmentState(score) {
+            if (score >= 6) return { label: 'Aligned', color: 'var(--success)', class: 'state-aligned' };
+            if (score >= 3) return { label: 'Growing', color: 'var(--warning)', class: 'state-growing' };
+            return { label: 'Tender', color: 'var(--tender)', class: 'state-tender' };
+        }
+
+        function calculateStreak() {
+            if (state.entries.length === 0) return 0;
+            
+            const sorted = [...state.entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+            let streak = 0;
+            let currentDate = new Date();
+            
+            for (const entry of sorted) {
+                const entryDate = new Date(entry.date + 'T00:00:00');
+                const daysDiff = Math.floor((currentDate - entryDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff === streak) {
+                    streak++;
+                } else if (daysDiff > streak) {
+                    break;
+                }
+            }
+            
+            return streak;
+        }
+
+        function updateStats() {
+            const streak = calculateStreak();
+            const total = state.entries.length;
+            
+            // Calculate average alignment
+            let avgAlignment = 0;
+            if (total > 0) {
+                const scores = state.entries.map(calculateAlignment);
+                avgAlignment = Math.round((scores.reduce((a, b) => a + b, 0) / scores.length / 10) * 100);
+            }
+            
+            // This month entries
+            const now = new Date();
+            const thisMonth = state.entries.filter(e => {
+                const d = new Date(e.date + 'T00:00:00');
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            }).length;
+            
+            document.getElementById('stat-streak').textContent = streak;
+            document.getElementById('stat-alignment').textContent = avgAlignment + '%';
+            document.getElementById('progress-alignment').style.width = avgAlignment + '%';
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-month').textContent = thisMonth;
+        }
+
+        // Initialize selects
+        function initSelects() {
+            document.getElementById('heart-select').innerHTML = options.heart.map(opt => 
+                `<button data-option="${opt}">${opt}</button>`
+            ).join('');
+
+            document.getElementById('response-select').innerHTML = options.response.map(opt => 
+                `<button data-option="${opt}">${opt}</button>`
+            ).join('');
+
+            document.getElementById('obedience-select').innerHTML = options.obedience.map(opt => 
+                `<button data-option="${opt}">${opt}</button>`
+            ).join('');
+
+            document.getElementById('love-select').innerHTML = options.love.map(opt => 
+                `<button data-option="${opt}">${opt}</button>`
+            ).join('');
+
+            // Event listeners
+            document.getElementById('heart-select').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const option = e.target.dataset.option;
+                    const index = state.currentEntry.heart.indexOf(option);
+                    if (index > -1) {
+                        state.currentEntry.heart.splice(index, 1);
+                        e.target.classList.remove('selected');
+                    } else {
+                        state.currentEntry.heart.push(option);
+                        e.target.classList.add('selected');
+                    }
+                }
+            });
+
+            document.getElementById('response-select').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const option = e.target.dataset.option;
+                    const index = state.currentEntry.response.indexOf(option);
+                    if (index > -1) {
+                        state.currentEntry.response.splice(index, 1);
+                        e.target.classList.remove('selected');
+                    } else {
+                        state.currentEntry.response.push(option);
+                        e.target.classList.add('selected');
+                    }
+                }
+            });
+
+            document.getElementById('obedience-select').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    document.querySelectorAll('#obedience-select button').forEach(btn => 
+                        btn.classList.remove('selected')
+                    );
+                    e.target.classList.add('selected');
+                    state.currentEntry.obedience = e.target.dataset.option;
+                }
+            });
+
+            document.getElementById('love-select').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    document.querySelectorAll('#love-select button').forEach(btn => 
+                        btn.classList.remove('selected')
+                    );
+                    e.target.classList.add('selected');
+                    state.currentEntry.loveExpression = e.target.dataset.option;
+                }
+            });
+        }
+
+        function loadEntryForDate(date) {
+            const existing = state.entries.find(e => e.date === date);
+            
+            if (existing) {
+                state.currentEntry = { ...existing };
+            } else {
+                state.currentEntry = {
+                    date: date,
+                    heart: [],
+                    response: [],
+                    obedience: '',
+                    loveExpression: '',
+                    keyMoment: '',
+                    prayer: '',
+                    userName: state.user?.name || '',
+                    userEmail: state.user?.email || ''
+                };
+            }
+
+            document.getElementById('key-moment').value = state.currentEntry.keyMoment;
+            document.getElementById('prayer').value = state.currentEntry.prayer;
+
+            // Update selections
+            document.querySelectorAll('#heart-select button').forEach(btn => {
+                btn.classList.toggle('selected', state.currentEntry.heart.includes(btn.dataset.option));
+            });
+
+            document.querySelectorAll('#response-select button').forEach(btn => {
+                btn.classList.toggle('selected', state.currentEntry.response.includes(btn.dataset.option));
+            });
+
+            document.querySelectorAll('#obedience-select button').forEach(btn => {
+                btn.classList.toggle('selected', state.currentEntry.obedience === btn.dataset.option);
+            });
+
+            document.querySelectorAll('#love-select button').forEach(btn => {
+                btn.classList.toggle('selected', state.currentEntry.loveExpression === btn.dataset.option);
+            });
+        }
+
+        function saveEntry() {
+            state.currentEntry.keyMoment = document.getElementById('key-moment').value;
+            state.currentEntry.prayer = document.getElementById('prayer').value;
+            state.currentEntry.userName = state.user?.name || '';
+            state.currentEntry.userEmail = state.user?.email || '';
+            
+            const updatedEntries = state.entries.filter(e => e.date !== state.currentEntry.date);
+            state.entries = [...updatedEntries, { ...state.currentEntry }]
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            saveUserData();
+            updateStats();
+            
+            const btn = document.getElementById('save-entry');
+            btn.textContent = 'Saved ✓';
+            setTimeout(() => btn.textContent = 'Save Entry', 2000);
+        }
+
+        // Render calendar
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-full-grid');
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            
+            // Update month header
+            document.getElementById('calendar-month').textContent = 
+                now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            
+            // Day headers
+            const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            let html = dayHeaders.map(day => `<div class="calendar-day-header">${day}</div>`).join('');
+            
+            // First day of month
+            const firstDay = new Date(year, month, 1).getDay();
+            
+            // Days in month
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Empty cells before first day
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div></div>';
+            }
+            
+            // Days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dateStr = date.toISOString().split('T')[0];
+                const entry = state.entries.find(e => e.date === dateStr);
+                const score = entry ? calculateAlignment(entry) : null;
+                const stateObj = score !== null ? getAlignmentState(score) : null;
+                
+                html += `
+                    <div class="calendar-day ${entry ? 'has-entry' : ''}" 
+                         data-date="${dateStr}"
+                         style="background-color: ${stateObj ? stateObj.color + '20' : ''}">
+                        <div class="day-number">${day}</div>
+                        ${entry ? `<div class="day-indicator" style="background-color: ${stateObj.color}"></div>` : ''}
+                    </div>
+                `;
+            }
+            
+            grid.innerHTML = html;
+            
+            // Add click handlers
+            grid.querySelectorAll('.calendar-day').forEach(day => {
+                if (day.dataset.date) {
+                    day.addEventListener('click', () => {
+                        state.selectedDate = day.dataset.date;
+                        loadEntryForDate(state.selectedDate);
+                        switchView('daily');
+                    });
+                }
+            });
+        }
+
+        // Render board view
+        function renderBoardView() {
+            const aligned = [];
+            const growing = [];
+            const tender = [];
+            
+            state.entries.forEach(entry => {
+                const score = calculateAlignment(entry);
+                const stateObj = getAlignmentState(score);
+                
+                if (stateObj.label === 'Aligned') aligned.push(entry);
+                else if (stateObj.label === 'Growing') growing.push(entry);
+                else tender.push(entry);
+            });
+            
+            document.getElementById('aligned-count').textContent = aligned.length;
+            document.getElementById('growing-count').textContent = growing.length;
+            document.getElementById('tender-count').textContent = tender.length;
+            
+            function renderCards(entries, containerId, color) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = entries.slice(0, 10).map(entry => `
+                    <div class="board-card" style="border-left-color: ${color}" data-date="${entry.date}">
+                        <div class="board-card-date">
+                            ${new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { 
+                                month: 'short', day: 'numeric', year: 'numeric' 
+                            })}
+                        </div>
+                        ${entry.keyMoment ? `<div class="board-card-preview">${entry.keyMoment.substring(0, 80)}...</div>` : ''}
+                    </div>
+                `).join('');
+                
+                container.querySelectorAll('.board-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        state.selectedDate = card.dataset.date;
+                        loadEntryForDate(state.selectedDate);
+                        switchView('daily');
+                    });
+                });
+            }
+            
+            renderCards(aligned, 'aligned-cards', 'var(--success)');
+            renderCards(growing, 'growing-cards', 'var(--warning)');
+            renderCards(tender, 'tender-cards', 'var(--tender)');
+        }
+
+        // Render table view
+        function renderTableView() {
+            const tbody = document.getElementById('table-body');
+            
+            tbody.innerHTML = state.entries.slice(0, 20).map(entry => {
+                const score = calculateAlignment(entry);
+                const stateObj = getAlignmentState(score);
+                
+                return `
+                    <tr data-date="${entry.date}">
+                        <td>${new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { 
+                            month: 'short', day: 'numeric', year: 'numeric' 
+                        })}</td>
+                        <td><span class="state-badge ${stateObj.class}">${stateObj.label}</span></td>
+                        <td>${score}/10</td>
+                        <td>${entry.heart.join(', ') || '-'}</td>
+                        <td>${entry.response.join(', ') || '-'}</td>
+                        <td>${entry.obedience || '-'}</td>
+                        <td>${entry.loveExpression || '-'}</td>
+                        <td>${entry.keyMoment ? entry.keyMoment.substring(0, 50) + '...' : '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.querySelectorAll('tr').forEach(row => {
+                row.addEventListener('click', () => {
+                    state.selectedDate = row.dataset.date;
+                    loadEntryForDate(state.selectedDate);
+                    switchView('daily');
+                });
+            });
+        }
+
+        // Switch views
+        function switchView(view) {
+            state.currentView = view;
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === view);
+            });
+            
+            document.querySelectorAll('.view-content').forEach(v => {
+                v.classList.add('hidden');
+            });
+            
+            const viewMap = {
+                'daily': 'daily-view',
+                'history': 'history-view',
+                'weekly': 'weekly-view'
+            };
+            
+            document.getElementById(viewMap[view]).classList.remove('hidden');
+            
+            if (view === 'history') {
+                switchHistoryView(state.historyView);
+            }
+        }
+
+        function switchHistoryView(view) {
+            state.historyView = view;
+            
+            document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.historyView === view);
+            });
+            
+            document.getElementById('calendar-view-container').classList.toggle('hidden', view !== 'calendar');
+            document.getElementById('board-view-container').classList.toggle('hidden', view !== 'board');
+            document.getElementById('table-view-container').classList.toggle('hidden', view !== 'table');
+            
+            if (view === 'calendar') renderCalendar();
+            else if (view === 'board') renderBoardView();
+            else if (view === 'table') renderTableView();
+        }
+
+        // WhatsApp share
+        function shareOnWhatsApp() {
+            const verseText = document.getElementById('verse-text').textContent;
+            const verseRef = document.getElementById('verse-reference').textContent;
+            const customVerse = document.getElementById('custom-verse').value;
+            
+            const message = customVerse || `${verseText}\n\n— ${verseRef}`;
+            const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show preloader
+            showPreloader();
+            
+            // Check if user is logged in
+            const savedUser = localStorage.getItem('spiritualUser');
+            if (savedUser) {
+                state.user = JSON.parse(savedUser);
+                document.getElementById('user-name').textContent = state.user.name;
+                document.getElementById('user-email').textContent = state.user.email;
+                
+                const avatar = document.getElementById('user-avatar');
+                if (state.user.picture) {
+                    avatar.innerHTML = `<img src="${state.user.picture}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                } else {
+                    avatar.textContent = state.user.name.charAt(0).toUpperCase();
+                }
+                
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app').classList.add('visible');
+                loadUserData();
+            } else {
+                setTimeout(() => {
+                    initGoogleSignIn();
+                }, 1000);
+            }
+            
+            initSelects();
+            document.getElementById('weekly-date').value = new Date().toISOString().split('T')[0];
+            
+            // Navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchView(btn.dataset.view));
+            });
+            
+            document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchHistoryView(btn.dataset.historyView));
+            });
+            
+            // Save buttons
+            document.getElementById('save-entry').addEventListener('click', saveEntry);
+            
+            // Share verse
+            document.getElementById('share-verse').addEventListener('click', shareOnWhatsApp);
+            
+            // Custom verse
+            document.getElementById('custom-verse').addEventListener('input', (e) => {
+                state.customVerse = e.target.value;
+                saveUserData();
+            });
+            
+            // Textarea sync
+            document.getElementById('key-moment').addEventListener('input', (e) => {
+                state.currentEntry.keyMoment = e.target.value;
+            });
+            
+            document.getElementById('prayer').addEventListener('input', (e) => {
+                state.currentEntry.prayer = e.target.value;
+            });
+
+            // Weekly reflection save
+            document.getElementById('save-reflection').addEventListener('click', () => {
+                const reflection = {
+                    week: document.getElementById('weekly-date').value,
+                    patterns: document.getElementById('patterns').value,
+                    growth: document.getElementById('growth').value,
+                    struggle: document.getElementById('struggle').value,
+                    emphasis: document.getElementById('emphasis').value,
+                    prayer: document.getElementById('weekly-prayer').value
+                };
+                
+                state.weeklyReflections = [reflection, ...state.weeklyReflections];
+                saveUserData();
+                
+                document.getElementById('patterns').value = '';
+                document.getElementById('growth').value = '';
+                document.getElementById('struggle').value = '';
+                document.getElementById('emphasis').value = '';
+                document.getElementById('weekly-prayer').value = '';
+                
+                const btn = document.getElementById('save-reflection');
+                btn.textContent = 'Saved ✓';
+                setTimeout(() => btn.textContent = 'Save Reflection', 2000);
+            });
+        });
+    </script>
+</body>
+</html>
