@@ -116,6 +116,11 @@
             transform-origin: 100% 100%;
         }
 
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
             25% { transform: scale(1.1); }
@@ -1309,6 +1314,48 @@
             .scrolling-text {
                 font-size: 0.85rem;
             }
+
+            /* Mobile Worship Mode */
+            .worship-toggle {
+                bottom: 90px;
+                right: 15px;
+                font-size: 0.95rem;
+                padding: 1rem 1.25rem;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            }
+
+            .worship-player {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .worship-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .worship-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+
+            .worship-info {
+                margin-left: 0.75rem;
+            }
+
+            .worship-title {
+                font-size: 0.95rem;
+            }
+
+            .worship-artist {
+                font-size: 0.8rem;
+            }
+
+            #player-status {
+                font-size: 0.75rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1330,14 +1377,14 @@
     <!-- Scrolling Banner -->
     <div class="scrolling-banner">
         <div class="scrolling-text">
-            ✨ Join 1,000+ users tracking their spiritual awareness daily ✨ Know how you reacted today ✨ See where you improved ✨ Discover patterns in your heart ✨ Grow with grace and intention ✨ Track your transformation journey ✨
+            ✨ Join 1,000+ believers tracking their spiritual awareness daily ✨ Know how you reacted today ✨ See where you improved ✨ Discover patterns in your heart ✨ Grow with grace and intention ✨ Track your transformation journey ✨
         </div>
     </div>
 
     <!-- Preloader -->
     <div class="preloader" id="preloader">
         <div class="heart-loader"></div>
-        <div class="loader-text">Preparing your sacred space...</div>
+        <div class="loader-text">Track Your Heart. Grow in Grace. Live Aligned...</div>
         <div class="loader-counter" id="loader-counter">0%</div>
     </div>
 
@@ -1345,8 +1392,8 @@
     <div class="auth-screen" id="auth-screen">
         <div class="auth-card">
             <div class="auth-logo">✝</div>
-            <h1 class="auth-title">Grace Aware Tracker</h1>
-            <p class="auth-subtitle">Your companion for spiritual growth and self-awareness. Track your heart, recognize patterns, and grow with grace.</p>
+            <h1 class="auth-title">Daily GraceAware Tracker</h1>
+            <p class="auth-subtitle">Your  digital companion tool that helps believers grow in awareness, alignment, and Christlike character through daily reflection and grace-centered tracking.</p>
             <div id="googleSignInButton"></div>
             <p style="color: var(--text-medium); margin-top: 1.5rem; font-size: 0.9rem;">
                 🔒 Secure sign-in • Auto-save your progress • Access from any device
@@ -1363,12 +1410,12 @@
         <div class="donation-body">
             <div class="donation-question">Has this helped your spiritual growth?</div>
             <div class="donation-info">
-                <div class="donation-label">M-Pesa Till Number</div>
+                <div class="donation-label">M-PESA TILL NUMBER</div>
                 <div class="donation-value">3711112</div>
             </div>
             <div class="donation-info">
-                <div class="donation-label">Account Name</div>
-                <div class="donation-value">Grace Aware Tracker</div>
+                <div class="donation-label">SENDWAVE/WORLD REMIT</div>
+                <div class="donation-value">+254795582978</div>
             </div>
             <div class="donation-message">
                 Your support helps us develop this into a full mobile app for the Play Store and App Store. Together, we're building something that transforms lives. 🙏
@@ -1381,8 +1428,9 @@
         <!-- Header -->
         <header class="header">
             <div class="header-left">
-                <div class="logo">✝</div>
-                <h1 class="app-title">Grace Aware Tracker</h1>
+                <div class="logo">Dgat✝</div>
+                <h1 class="app-title">Daily GraceAware Tracker</h1>
+                <h2 class="app-subtitle">Track Your Heart. Grow in Grace. Live Aligned.</h2>
             </div>
             <div class="header-right">
                 <div class="user-profile">
@@ -1816,17 +1864,20 @@
         <!-- Worship Mode Player -->
         <div class="worship-player" id="worship-player">
             <div class="worship-controls">
-                <button class="worship-btn" id="play-pause-btn">▶</button>
+                <button class="worship-btn" id="play-pause-btn" title="Play/Pause">▶</button>
                 <div class="worship-info">
                     <div class="worship-title">Peaceful Meditation</div>
                     <div class="worship-artist">DappyTKeys - Spiritual Reflection Music</div>
                 </div>
             </div>
-            <button class="worship-btn" id="close-worship">✕</button>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <div id="player-status" style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin-right: 1rem;"></div>
+                <button class="worship-btn" id="close-worship" title="Close Worship Mode">✕</button>
+            </div>
         </div>
 
         <!-- Worship Mode Toggle Button -->
-        <button class="worship-toggle" id="worship-toggle">
+        <button class="worship-toggle" id="worship-toggle" title="Enable Worship Mode - Background Meditation Music">
             🎵 Worship Mode
         </button>
 
@@ -2542,71 +2593,281 @@
         // 3. WORSHIP MODE - YOUTUBE PLAYER
         let youtubePlayer = null;
         let playerReady = false;
+        let apiLoaded = false;
+        let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
         function initYouTubePlayer() {
-            // Load YouTube IFrame API
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            console.log('🎵 Initializing YouTube Player for Worship Mode...');
+            console.log('📱 Mobile device:', isMobile);
+            
+            // Check if API already loaded
+            if (window.YT && window.YT.Player) {
+                console.log('✅ YouTube API already loaded, creating player...');
+                createPlayer();
+                return;
+            }
+
+            // Load YouTube IFrame API if not already loaded
+            if (!apiLoaded) {
+                console.log('📡 Loading YouTube IFrame API...');
+                apiLoaded = true;
+                const tag = document.createElement('script');
+                tag.src = 'https://www.youtube.com/iframe_api';
+                tag.onload = function() {
+                    console.log('✅ YouTube API script loaded successfully');
+                };
+                tag.onerror = function() {
+                    console.error('❌ Failed to load YouTube API - check internet connection');
+                    alert('Unable to load worship music. Please check your internet connection and refresh the page.');
+                };
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            } else {
+                console.log('⏳ YouTube API is already loading...');
+            }
         }
 
-        // YouTube API callback
+        // YouTube API callback - this is called automatically when API loads
         window.onYouTubeIframeAPIReady = function() {
-            youtubePlayer = new YT.Player('youtube-player', {
-                height: '0',
-                width: '0',
-                videoId: 'kYyP_cD-PNI', // DappyTKeys meditation
-                playerVars: {
-                    autoplay: 0,
-                    loop: 1,
-                    playlist: 'kYyP_cD-PNI'
-                },
-                events: {
-                    onReady: function() {
-                        playerReady = true;
-                    }
-                }
-            });
+            console.log('✅ YouTube API Ready - callback triggered');
+            createPlayer();
         };
+
+        function createPlayer() {
+            if (youtubePlayer) {
+                console.log('⚠️ Player already exists, skipping creation');
+                return; // Already created
+            }
+            
+            console.log('🎬 Creating YouTube Player...');
+            updatePlayerStatus('Initializing...');
+            
+            try {
+                youtubePlayer = new YT.Player('youtube-player', {
+                    height: '0',
+                    width: '0',
+                    videoId: 'kYyP_cD-PNI', // DappyTKeys meditation
+                    playerVars: {
+                        autoplay: 0,
+                        loop: 1,
+                        playlist: 'kYyP_cD-PNI',
+                        controls: 0,
+                        modestbranding: 1,
+                        rel: 0,
+                        playsinline: 1 // Important for iOS
+                    },
+                    events: {
+                        onReady: function(event) {
+                            playerReady = true;
+                            console.log('✅ YouTube Player Ready - you can now play worship music!');
+                            updatePlayerStatus(isMobile ? 'Tap ▶ to play' : 'Ready');
+                            
+                            // On mobile, don't auto-start - wait for user interaction
+                            if (!isMobile && state.worshipMode) {
+                                console.log('🎵 Auto-starting playback (desktop only)');
+                                setTimeout(() => {
+                                    try {
+                                        event.target.playVideo();
+                                    } catch (e) {
+                                        console.log('Auto-play blocked, user must click play');
+                                    }
+                                }, 500);
+                            }
+                        },
+                        onError: function(event) {
+                            console.error('❌ YouTube Player Error Code:', event.data);
+                            updatePlayerStatus('Error');
+                            
+                            let errorMsg = 'Error loading worship music. ';
+                            if (event.data === 2) errorMsg += 'Invalid video ID.';
+                            else if (event.data === 5) errorMsg += 'HTML5 player error.';
+                            else if (event.data === 100) errorMsg += 'Video not found or removed.';
+                            else if (event.data === 101 || event.data === 150) errorMsg += 'Video owner has disabled embedding.';
+                            else errorMsg += 'Unknown error (code ' + event.data + ').';
+                            
+                            console.error(errorMsg);
+                            alert(errorMsg + '\n\nPlease check your internet connection or try again later.');
+                        },
+                        onStateChange: function(event) {
+                            // Update button based on state
+                            const btn = document.getElementById('play-pause-btn');
+                            
+                            if (event.data === YT.PlayerState.PLAYING) {
+                                console.log('▶️ Playing worship music');
+                                btn.textContent = '⏸';
+                                updatePlayerStatus('Playing');
+                            } else if (event.data === YT.PlayerState.PAUSED) {
+                                console.log('⏸️ Paused');
+                                btn.textContent = '▶';
+                                updatePlayerStatus('Paused');
+                            } else if (event.data === YT.PlayerState.BUFFERING) {
+                                console.log('⏳ Buffering...');
+                                updatePlayerStatus('Loading...');
+                            } else if (event.data === YT.PlayerState.ENDED) {
+                                console.log('🔁 Video ended, restarting (loop)');
+                                // Should auto-loop, but just in case
+                                event.target.playVideo();
+                            } else if (event.data === YT.PlayerState.CUED) {
+                                console.log('📼 Video cued');
+                            }
+                        }
+                    }
+                });
+                console.log('🎬 Player object created, waiting for onReady event...');
+            } catch (error) {
+                console.error('❌ Error creating player:', error);
+                updatePlayerStatus('Failed');
+                alert('Failed to create music player. Error: ' + error.message + '\n\nPlease refresh the page and try again.');
+            }
+        }
+
+        function updatePlayerStatus(status) {
+            const statusEl = document.getElementById('player-status');
+            if (statusEl) {
+                statusEl.textContent = status;
+            }
+        }
 
         function toggleWorshipMode() {
             const player = document.getElementById('worship-player');
             const toggle = document.getElementById('worship-toggle');
             
             if (!state.worshipMode) {
+                // Turning worship mode ON
                 state.worshipMode = true;
                 player.classList.add('active');
                 toggle.style.display = 'none';
                 
-                if (playerReady && youtubePlayer) {
-                    youtubePlayer.playVideo();
-                    document.getElementById('play-pause-btn').textContent = '⏸';
+                // Mobile-specific handling
+                if (isMobile) {
+                    console.log('📱 Mobile detected - user must tap play button');
+                    updatePlayerStatus('Tap ▶ to play');
+                    
+                    // Show mobile instruction
+                    const btn = document.getElementById('play-pause-btn');
+                    btn.style.animation = 'pulse 1s infinite';
+                    
+                    if (playerReady) {
+                        // Player ready, just show message
+                        setTimeout(() => {
+                            alert('📱 Tap the ▶ button to start worship music\n\n(Mobile browsers require user interaction to play audio)');
+                        }, 300);
+                    }
+                }
+                
+                // Check if player is ready
+                if (!playerReady) {
+                    // Player not ready yet - show loading
+                    const btn = document.getElementById('play-pause-btn');
+                    btn.textContent = '⏳';
+                    updatePlayerStatus('Connecting...');
+                    
+                    // Wait for player to be ready (check every 500ms)
+                    const checkReady = setInterval(() => {
+                        if (playerReady && youtubePlayer) {
+                            clearInterval(checkReady);
+                            
+                            if (isMobile) {
+                                // Mobile - don't auto-play, show ready state
+                                btn.textContent = '▶';
+                                btn.style.animation = 'pulse 1s infinite';
+                                updatePlayerStatus('Tap ▶ to play');
+                                alert('📱 Ready! Tap the ▶ button to start worship music');
+                            } else {
+                                // Desktop - try auto-play
+                                try {
+                                    youtubePlayer.playVideo();
+                                    btn.textContent = '⏸';
+                                    updatePlayerStatus('Playing');
+                                } catch (error) {
+                                    console.error('Error playing:', error);
+                                    btn.textContent = '▶';
+                                    updatePlayerStatus('Click ▶ to play');
+                                }
+                            }
+                        }
+                    }, 500);
+                    
+                    // Timeout after 15 seconds
+                    setTimeout(() => {
+                        clearInterval(checkReady);
+                        if (!playerReady) {
+                            btn.textContent = '❌';
+                            updatePlayerStatus('Failed to load');
+                            alert('Worship music failed to load. Please:\n1. Check your internet connection\n2. Refresh the page\n3. Try again\n\nIf the problem persists, the YouTube video may be unavailable.');
+                        }
+                    }, 15000);
+                } else if (!isMobile) {
+                    // Desktop and player ready - try auto-play
+                    try {
+                        youtubePlayer.playVideo();
+                        document.getElementById('play-pause-btn').textContent = '⏸';
+                        updatePlayerStatus('Playing');
+                    } catch (error) {
+                        console.error('Error playing video:', error);
+                        updatePlayerStatus('Click ▶ to play');
+                        alert('Please click the ▶ button to start worship music');
+                    }
                 }
             } else {
+                // Turning worship mode OFF
                 state.worshipMode = false;
                 player.classList.remove('active');
                 toggle.style.display = 'flex';
                 
+                // Remove pulse animation
+                const btn = document.getElementById('play-pause-btn');
+                btn.style.animation = '';
+                
                 if (playerReady && youtubePlayer) {
-                    youtubePlayer.pauseVideo();
-                    document.getElementById('play-pause-btn').textContent = '▶';
+                    try {
+                        youtubePlayer.pauseVideo();
+                        document.getElementById('play-pause-btn').textContent = '▶';
+                        updatePlayerStatus('Paused');
+                    } catch (error) {
+                        console.error('Error pausing video:', error);
+                    }
                 }
             }
         }
 
         function togglePlayPause() {
-            if (!playerReady || !youtubePlayer) return;
+            if (!playerReady || !youtubePlayer) {
+                alert('Player is not ready yet. Please wait a moment and try again.');
+                return;
+            }
             
-            const playerState = youtubePlayer.getPlayerState();
-            const btn = document.getElementById('play-pause-btn');
-            
-            if (playerState === 1) { // Playing
-                youtubePlayer.pauseVideo();
-                btn.textContent = '▶';
-            } else {
-                youtubePlayer.playVideo();
-                btn.textContent = '⏸';
+            try {
+                const playerState = youtubePlayer.getPlayerState();
+                const btn = document.getElementById('play-pause-btn');
+                
+                // Remove pulse animation on first interaction
+                btn.style.animation = '';
+                
+                if (playerState === YT.PlayerState.PLAYING || playerState === 1) {
+                    console.log('⏸️ User paused playback');
+                    youtubePlayer.pauseVideo();
+                    btn.textContent = '▶';
+                    updatePlayerStatus('Paused');
+                } else {
+                    console.log('▶️ User started playback');
+                    
+                    // Important for mobile: play with user gesture
+                    youtubePlayer.playVideo().then(() => {
+                        console.log('✅ Playback started successfully');
+                        btn.textContent = '⏸';
+                        updatePlayerStatus('Playing');
+                    }).catch((error) => {
+                        console.error('❌ Playback failed:', error);
+                        // Fallback: try without promise
+                        youtubePlayer.playVideo();
+                        btn.textContent = '⏸';
+                        updatePlayerStatus('Playing');
+                    });
+                }
+            } catch (error) {
+                console.error('Error toggling playback:', error);
+                alert('Error controlling playback. Error: ' + error.message);
             }
         }
 
@@ -2954,7 +3215,11 @@
                 // Initialize new features
                 fetchDailyVerse();
                 loadScripturePrompt();
-                initYouTubePlayer();
+                
+                // Initialize YouTube player after small delay to ensure DOM is ready
+                setTimeout(() => {
+                    initYouTubePlayer();
+                }, 1000);
             } else {
                 setTimeout(() => {
                     initGoogleSignIn();
